@@ -97,6 +97,31 @@ func Example_set() {
 	// bar
 }
 
+func Example_unset() {
+	values := []optional.String{
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
+		{},
+	}
+
+	for _, v := range values {
+		v.Unset()
+		value, err := v.Get()
+		if err != nil {
+			fmt.Println(err.Error())
+		} else {
+			fmt.Println(value)
+		}
+	}
+
+	// Output:
+	// value not present
+	// value not present
+	// value not present
+	// value not present
+}
+
 func Example_marshalJSON() {
 	type example struct {
 		Field    *optional.String `json:"field,omitempty"`

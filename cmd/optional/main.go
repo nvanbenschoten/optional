@@ -156,6 +156,11 @@ func ({{ .VariableName }} *{{ .OutputName }}) Unset() {
 	*{{ .VariableName }} = {{ .OutputName }}{}
 }
 
+// Present returns whether or not the value is present.
+func ({{ .VariableName }} {{ .OutputName }}) Present() bool {
+	return {{ .VariableName }}.set
+}
+
 // Get returns the {{ .TypeName }} value or an error if not present.
 func ({{ .VariableName }} {{ .OutputName }}) Get() ({{ .TypeName }}, error) {
 	if !{{ .VariableName }}.Present() {
@@ -165,9 +170,12 @@ func ({{ .VariableName }} {{ .OutputName }}) Get() ({{ .TypeName }}, error) {
 	return {{ .VariableName }}.val, nil
 }
 
-// Present returns whether or not the value is present.
-func ({{ .VariableName }} {{ .OutputName }}) Present() bool {
-	return {{ .VariableName }}.set
+// MustGet returns the {{ .TypeName }} value or panics if not present.
+func ({{ .VariableName }} {{ .OutputName }}) MustGet() {{ .TypeName }} {
+	if !{{ .VariableName }}.Present() {
+		panic("value not present")
+	}
+	return {{ .VariableName }}.val
 }
 
 // OrElse returns the {{ .TypeName }} value or a default value if the value is not present.

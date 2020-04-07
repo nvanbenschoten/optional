@@ -26,6 +26,20 @@ func TestInt_Get_NotPresent(t *testing.T) {
 	assert.Equal(t, zero, v)
 }
 
+func TestInt_MustGet_Present(t *testing.T) {
+	o := MakeInt(42)
+
+	assert.True(t, o.Present())
+	assert.Equal(t, 42, o.MustGet())
+}
+
+func TestInt_MustGet_NotPresent(t *testing.T) {
+	o := Int{}
+
+	assert.False(t, o.Present())
+	assert.Panics(t, func() { o.MustGet() })
+}
+
 func TestInt_OrElse_Present(t *testing.T) {
 	o := MakeInt(42)
 

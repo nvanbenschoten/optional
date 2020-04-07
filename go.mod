@@ -1,4 +1,4 @@
-module github.com/markphelps/optional
+module github.com/nvanbenschoten/optional
 
 go 1.13
 

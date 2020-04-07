@@ -1,11 +1,10 @@
 # Optional
 
-[![Build Status](https://travis-ci.org/markphelps/optional.svg?branch=master)](https://travis-ci.org/markphelps/optional)
-[![Release](https://img.shields.io/github/release/markphelps/optional.svg?style=flat-square)](https://github.com/markphelps/optional/releases/latest)
+[![Build Status](https://travis-ci.org/nvanbenschoten/optional.svg?branch=master)](https://travis-ci.org/nvanbenschoten/optional)
+[![Release](https://img.shields.io/github/release/nvanbenschoten/optional.svg?style=flat-square)](https://github.com/nvanbenschoten/optional/releases/latest)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](http://godoc.org/github.com/markphelps/optional)
-[![Go Report Card](https://goreportcard.com/badge/github.com/markphelps/optional?style=flat-square)](https://goreportcard.com/report/github.com/markphelps/optional)
-[![SayThanks.io](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg?style=flat-square)](https://saythanks.io/to/markphelps)
+[![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](http://godoc.org/github.com/nvanbenschoten/optional)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nvanbenschoten/optional?style=flat-square)](https://goreportcard.com/report/github.com/nvanbenschoten/optional)
 
 Optional is a library that provides option types for the primitive Go types.
 
@@ -25,7 +24,7 @@ In Go, variables declared without an explicit initial value are given their zero
 
 ### Install
 
-`go get -u github.com/markphelps/optional/cmd/optional`
+`go get -u github.com/nvanbenschoten/optional/cmd/optional`
 
 ### Usage
 
@@ -84,7 +83,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/markphelps/optional"
+	"github.com/nvanbenschoten/optional"
 )
 
 func main() {
@@ -102,11 +101,9 @@ func main() {
 }
 ```
 
-See [example_test.go](example_test.go) and the [documentation](http://godoc.org/github.com/markphelps/optional) for more usage.
+See [example_test.go](example_test.go) and the [documentation](http://godoc.org/github.com/nvanbenschoten/optional) for more usage.
 
 ## Marshalling/Unmarshalling JSON
-
-**Note:** v0.6.0 introduces a potential breaking change to anyone depending on marshalling non-present values to their zero values instead of null. See: [#9](https://github.com/markphelps/optional/pull/9) for more context.
 
 Option types marshal to/from JSON as you would expect:
 
@@ -177,7 +174,7 @@ If changing the API you may need to update the [golden files](https://medium.com
 
 ## Contributing
 
-1. [Fork it](https://github.com/markphelps/optional/fork)
+1. [Fork it](https://github.com/nvanbenschoten/optional/fork)
 1. Create your feature branch (`git checkout -b my-new-feature`)
 1. Commit your changes (`git commit -am 'Add some feature'`)
 1. Push to the branch (`git push origin my-new-feature`)

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/markphelps/optional"
+	"github.com/nvanbenschoten/optional"
 )
 
 func Example_get() {

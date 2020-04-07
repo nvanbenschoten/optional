@@ -13,8 +13,8 @@ Prerequisites are:
 Clone `optional` from source into `$GOPATH`:
 
 ```sh
-$ go get github.com/markphelps/optional
-$ cd $GOPATH/src/github.com/markphelps/optional
+$ go get github.com/nvanbenschoten/optional
+$ cd $GOPATH/src/github.com/nvanbenschoten/optional
 ```
 
 Install the build and lint dependencies:

@@ -3,6 +3,7 @@ package optional
 import (
 	"encoding/json"
 	"testing"
+	"unsafe"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -154,4 +155,10 @@ func TestString_UnmarshalJSON_Overwritten(t *testing.T) {
 
 	assert.True(t, instance.Unused.Present())
 	assert.Equal(t, "seed_d", instance.Unused.val)
+}
+
+func TestString_Size(t *testing.T) {
+	o := MakeString("foo")
+
+	assert.Equal(t, 24, int(unsafe.Sizeof(o)))
 }

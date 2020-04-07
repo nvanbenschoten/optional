@@ -185,6 +185,7 @@ func ({{ .VariableName }} {{ .OutputName }}) If(fn func({{ .TypeName }})) {
 	}
 }
 
+// MarshalJSON implements the json.Marshaler interface.
 func ({{ .VariableName }} {{ .OutputName }}) MarshalJSON() ([]byte, error) {
 	if {{ .VariableName }}.Present() {
 		return json.Marshal({{ .VariableName }}.val)
@@ -192,6 +193,7 @@ func ({{ .VariableName }} {{ .OutputName }}) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// UnmarshalJSON implements the json.Unmarshaler interface.
 func ({{ .VariableName }} *{{ .OutputName }}) UnmarshalJSON(data []byte) error {
 	if string(data) == "null" {
 		{{ .VariableName }}.Unset()

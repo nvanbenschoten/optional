@@ -8,7 +8,7 @@ import (
 )
 
 func TestString_Get_Present(t *testing.T) {
-	o := NewString("foo")
+	o := MakeString("foo")
 
 	v, err := o.Get()
 	assert.True(t, o.Present())
@@ -27,7 +27,7 @@ func TestString_Get_NotPresent(t *testing.T) {
 }
 
 func TestString_OrElse_Present(t *testing.T) {
-	o := NewString("foo")
+	o := MakeString("foo")
 
 	v := o.OrElse("bar")
 	assert.True(t, o.Present())
@@ -43,7 +43,7 @@ func TestString_OrElse_NotPresent(t *testing.T) {
 }
 
 func TestString_If_Present(t *testing.T) {
-	o := NewString("foo")
+	o := MakeString("foo")
 
 	canary := false
 	o.If(func(v string) {
@@ -73,8 +73,8 @@ func TestString_MarshalJSON(t *testing.T) {
 	}
 
 	var instance = fields{
-		WithValue:     NewString("foo"),
-		WithZeroValue: NewString(""),
+		WithValue:     MakeString("foo"),
+		WithZeroValue: MakeString(""),
 		WithNoValue:   String{},
 	}
 
@@ -98,16 +98,16 @@ func TestString_UnmarshalJSON(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.True(t, instance.WithZeroValue.Present())
-	assert.Equal(t, "foo", *instance.WithValue.value)
+	assert.Equal(t, "foo", instance.WithValue.val)
 
 	assert.True(t, instance.WithZeroValue.Present())
-	assert.Equal(t, "", *instance.WithZeroValue.value)
+	assert.Equal(t, "", instance.WithZeroValue.val)
 
 	assert.False(t, instance.WithNoValue.Present())
-	assert.Nil(t, instance.WithNoValue.value)
+	assert.Equal(t, "", instance.WithNoValue.val)
 
 	assert.False(t, instance.Unused.Present())
-	assert.Nil(t, instance.Unused.value)
+	assert.Equal(t, "", instance.Unused.val)
 }
 
 func TestString_UnmarshalJSON_Overwritten(t *testing.T) {
@@ -120,24 +120,24 @@ func TestString_UnmarshalJSON_Overwritten(t *testing.T) {
 
 	var jsonString = `{"WithValue":"foo","WithZeroValue":"","WithNoValue":null}`
 	instance := fields{
-		WithValue:     NewString("seed_a"),
-		WithZeroValue: NewString("seed_b"),
-		WithNoValue:   NewString("seed_c"),
-		Unused:        NewString("seed_d"),
+		WithValue:     MakeString("seed_a"),
+		WithZeroValue: MakeString("seed_b"),
+		WithNoValue:   MakeString("seed_c"),
+		Unused:        MakeString("seed_d"),
 	}
 
 	err := json.Unmarshal([]byte(jsonString), &instance)
 	assert.NoError(t, err)
 
 	assert.True(t, instance.WithValue.Present())
-	assert.Equal(t, "foo", *instance.WithValue.value)
+	assert.Equal(t, "foo", instance.WithValue.val)
 
 	assert.True(t, instance.WithZeroValue.Present())
-	assert.Equal(t, "", *instance.WithZeroValue.value)
+	assert.Equal(t, "", instance.WithZeroValue.val)
 
 	assert.False(t, instance.WithNoValue.Present())
-	assert.Nil(t, instance.WithNoValue.value)
+	assert.Equal(t, "", instance.WithNoValue.val)
 
 	assert.True(t, instance.Unused.Present())
-	assert.Equal(t, "seed_d", *instance.Unused.value)
+	assert.Equal(t, "seed_d", instance.Unused.val)
 }

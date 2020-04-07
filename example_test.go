@@ -9,9 +9,9 @@ import (
 
 func Example_get() {
 	values := []optional.String{
-		optional.NewString("foo"),
-		optional.NewString(""),
-		optional.NewString("bar"),
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
 		{},
 	}
 
@@ -33,9 +33,9 @@ func Example_get() {
 
 func Example_orElse() {
 	values := []optional.String{
-		optional.NewString("foo"),
-		optional.NewString(""),
-		optional.NewString("bar"),
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
 		{},
 	}
 
@@ -52,9 +52,9 @@ func Example_orElse() {
 
 func Example_if() {
 	values := []optional.String{
-		optional.NewString("foo"),
-		optional.NewString(""),
-		optional.NewString("bar"),
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
 		{},
 	}
 
@@ -78,7 +78,7 @@ func Example_set() {
 			"bar",
 		}
 
-		s = optional.NewString("baz")
+		s = optional.MakeString("baz")
 	)
 
 	for _, v := range values {
@@ -104,9 +104,9 @@ func Example_marshalJSON() {
 	}
 
 	var values = []optional.String{
-		optional.NewString("foo"),
-		optional.NewString(""),
-		optional.NewString("bar"),
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
 	}
 
 	for _, v := range values {

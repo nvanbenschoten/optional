@@ -14,8 +14,11 @@ It can also be used as a tool to generate option type wrappers around your own t
 
 In Go, variables declared without an explicit initial value are given their zero value. Most of the time this is what you want, but sometimes you want to be able to tell if a variable was set or if it's just a zero value. That's where [option types](https://en.wikipedia.org/wiki/Option_type) come in handy.
 
+This repository is a fork of github.com/markphelps/optional, which also provides option types for Go primitives and custom types. The driving motivation for this fork is performance. Where the original project uses pointer indirection to implement option types, this project inlines values directly into their option wrapper. This inlining avoids memory allocations, reduces garbage collection pressure, and improves cache locality.
+
 ## Inspiration
 
+* Rust [std::option](https://doc.rust-lang.org/std/option/)
 * Java [Optional](https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html)
 * [https://github.com/leighmcculloch/go-optional](https://github.com/leighmcculloch/go-optional)
 * [https://github.com/golang/go/issues/7054](https://github.com/golang/go/issues/7054)
@@ -87,7 +90,7 @@ import (
 )
 
 func main() {
-	s := optional.NewString("foo")
+	s := optional.MakeString("foo")
 
 	value, err := s.Get()
 	if err != nil {
@@ -121,7 +124,7 @@ func main() {
 	var value = struct {
 		Field optional.String `json:"field,omitempty"`
 	}{
-		Field: optional.NewString("bar"),
+		Field: optional.MakeString("bar"),
 	}
 
 	out, _ := json.Marshal(value)

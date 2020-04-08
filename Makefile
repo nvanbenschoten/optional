@@ -13,7 +13,7 @@ setup: ## Install all the build and lint dependencies
 .PHONY: test
 test: ## Run all the tests
 	@echo "--> Running tests"
-	go test $(TEST_OPTIONS) -failfast $(SOURCE_FILES) -run $(TEST_PATTERN) -timeout=1m
+	go test $(TEST_OPTIONS) $(SOURCE_FILES) -run $(TEST_PATTERN) -timeout=1m
 
 .PHONY: fmt
 fmt: ## gofmt and goimports all go files

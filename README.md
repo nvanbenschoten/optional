@@ -106,6 +106,53 @@ func main() {
 
 See [example_test.go](example_test.go) and the [documentation](http://godoc.org/github.com/nvanbenschoten/optional) for more usage.
 
+### Memory Layout
+
+Each option type is composed of its value type and a `bool` inlined into a single struct. For example, the option type for an `int32` is represented as `struct{int32, bool}`. The precise memory layout that this structure translates to is subject to Go's [type alignment and padding rules](https://golang.org/ref/spec#Size_and_alignment_guarantees), which make little in the way of guarantees around struct field alignment.
+
+In practice, however, the memory layout for this struct looks like:
+
+```
++---+---+---+---+---+---+---+---+
+| i | i | i | i | b | p | p | p |
++---+---+---+---+---+---+---+---+
+
+i = int32   byte
+b = bool    byte
+p = padding byte
+
+total size = 8 bytes
+```
+
+The following table lists the memory footprint in bytes of each of the option types provided by the library when compiled for a 64-bit CPU architecture using Go 1.13.9:
+
+| Type       | Size (bytes) |
+|------------|-------------:|
+| Bool       |            2 |
+| Byte       |            2 |
+| Complex128 |           24 |
+| Complex64  |           12 |
+| Error      |           24 |
+| Float32    |            8 |
+| Float64    |           16 |
+| Int        |           16 |
+| Int16      |            4 |
+| Int32      |            8 |
+| Int64      |           16 |
+| Int8       |            2 |
+| Rune       |            8 |
+| String     |           24 |
+| Uint       |           16 |
+| Uint16     |            4 |
+| Uint32     |            8 |
+| Uint64     |           16 |
+| Uint8      |            2 |
+| Uintptr    |           16 |
+
+These sizes will differ depending on target CPU architecture and may change in future compiler versions. Changes here will break the tests in [size_test.go](size_test.go).
+
+No effort has been made to specialize the implementation of specific option types in order to optimize for memory size. Future work may explore such optimizations in a manner akin to Rust's ["niche-filling strategy"](https://github.com/rust-lang/rust/pull/45225).
+
 ## Marshalling/Unmarshalling JSON
 
 Option types marshal to/from JSON as you would expect:

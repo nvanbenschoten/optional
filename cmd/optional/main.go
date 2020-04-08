@@ -148,7 +148,7 @@ func Make{{ .OutputName }}(v {{ .TypeName }}) {{ .OutputName }} {
 
 // Set sets the {{ .TypeName }} value.
 func ({{ .VariableName }} *{{ .OutputName }}) Set(v {{ .TypeName }}) {
-	*{{ .VariableName }} = {{ .OutputName }}{val: v, set: true}
+	*{{ .VariableName }} = Make{{ .OutputName }}(v)
 }
 
 // Unset unsets the {{ .TypeName }} value.

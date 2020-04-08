@@ -92,7 +92,7 @@ import (
 func main() {
 	s := optional.MakeString("foo")
 
-	value, err := s.Get()
+	value, err := s.GetOrErr()
 	if err != nil {
 		// handle error!
 	} else {
@@ -100,7 +100,7 @@ func main() {
 	}
 
 	t := optional.String{}
-	fmt.Println(t.OrElse("bar"))
+	fmt.Println(t.GetOr("bar"))
 }
 ```
 

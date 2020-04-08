@@ -11,50 +11,49 @@ import (
 func TestString_Get_Present(t *testing.T) {
 	o := MakeString("foo")
 
-	v, err := o.Get()
+	assert.True(t, o.Present())
+	assert.Equal(t, "foo", o.Get())
+}
+
+func TestString_Get_NotPresent(t *testing.T) {
+	o := String{}
+
+	assert.False(t, o.Present())
+	assert.Panics(t, func() { o.Get() })
+}
+
+func TestString_GetOr_Present(t *testing.T) {
+	o := MakeString("foo")
+
+	v := o.GetOr("bar")
+	assert.True(t, o.Present())
+	assert.Equal(t, "foo", v)
+}
+
+func TestString_GetOr_NotPresent(t *testing.T) {
+	o := String{}
+
+	v := o.GetOr("bar")
+	assert.False(t, o.Present())
+	assert.Equal(t, "bar", v)
+}
+
+func TestString_GetOrErr_Present(t *testing.T) {
+	o := MakeString("foo")
+
+	v, err := o.GetOrErr()
 	assert.True(t, o.Present())
 	assert.NoError(t, err)
 	assert.Equal(t, "foo", v)
 }
 
-func TestString_Get_NotPresent(t *testing.T) {
+func TestString_GetOrErr_NotPresent(t *testing.T) {
 	o := String{}
-	var zero string
 
-	v, err := o.Get()
+	v, err := o.GetOrErr()
 	assert.False(t, o.Present())
 	assert.Error(t, err)
-	assert.Equal(t, zero, v)
-}
-
-func TestString_MustGet_Present(t *testing.T) {
-	o := MakeString("foo")
-
-	assert.True(t, o.Present())
-	assert.Equal(t, "foo", o.MustGet())
-}
-
-func TestString_MustGet_NotPresent(t *testing.T) {
-	o := String{}
-
-	assert.False(t, o.Present())
-	assert.Panics(t, func() { o.MustGet() })
-}
-
-func TestString_OrElse_Present(t *testing.T) {
-	o := MakeString("foo")
-
-	v := o.OrElse("bar")
-	assert.True(t, o.Present())
-	assert.Equal(t, "foo", v)
-}
-
-func TestString_OrElse_NotPresent(t *testing.T) {
-	o := String{}
-
-	v := o.OrElse("bar")
-	assert.False(t, o.Present())
-	assert.Equal(t, "bar", v)
+	assert.Equal(t, "", v)
 }
 
 func TestString_If_Present(t *testing.T) {
@@ -77,6 +76,65 @@ func TestString_If_NotPresent(t *testing.T) {
 	})
 	assert.False(t, o.Present())
 	assert.False(t, canary)
+}
+
+func TestString_Map_Present(t *testing.T) {
+	o := MakeString("foo")
+
+	v := o.Map(func(s string) string { return "bar" })
+	assert.True(t, v.Present())
+	assert.Equal(t, "bar", v.Get())
+}
+
+func TestString_Map_NotPresent(t *testing.T) {
+	o := String{}
+
+	v := o.Map(func(s string) string { return "bar" })
+	assert.False(t, v.Present())
+}
+
+func TestString_And_Present(t *testing.T) {
+	o := MakeString("foo")
+
+	v := o.And(MakeString("bar"))
+	assert.True(t, v.Present())
+	assert.Equal(t, "bar", v.Get())
+
+	v2 := o.And(String{})
+	assert.False(t, v2.Present())
+}
+
+func TestString_And_NotPresent(t *testing.T) {
+	o := String{}
+
+	v := o.And(MakeString("bar"))
+	assert.False(t, v.Present())
+
+	v2 := o.And(String{})
+	assert.False(t, v2.Present())
+}
+
+func TestString_Or_Present(t *testing.T) {
+	o := MakeString("foo")
+
+	v := o.Or(MakeString("bar"))
+	assert.True(t, v.Present())
+	assert.Equal(t, "foo", v.Get())
+
+	v2 := o.Or(String{})
+	assert.True(t, v2.Present())
+	assert.Equal(t, "foo", v2.Get())
+}
+
+func TestString_Or_NotPresent(t *testing.T) {
+	o := String{}
+
+	v := o.Or(MakeString("bar"))
+	assert.True(t, v.Present())
+	assert.Equal(t, "bar", v.Get())
+
+	v2 := o.Or(String{})
+	assert.False(t, v2.Present())
 }
 
 func TestString_MarshalJSON(t *testing.T) {

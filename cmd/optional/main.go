@@ -161,8 +161,24 @@ func ({{ .VariableName }} {{ .OutputName }}) Present() bool {
 	return {{ .VariableName }}.set
 }
 
-// Get returns the {{ .TypeName }} value or an error if not present.
-func ({{ .VariableName }} {{ .OutputName }}) Get() ({{ .TypeName }}, error) {
+// Get returns the {{ .TypeName }} value or panics if not present.
+func ({{ .VariableName }} {{ .OutputName }}) Get() {{ .TypeName }} {
+	if !{{ .VariableName }}.Present() {
+		panic("value not present")
+	}
+	return {{ .VariableName }}.val
+}
+
+// GetOr returns the {{ .TypeName }} value or a default value if not present.
+func ({{ .VariableName }} {{ .OutputName }}) GetOr(v {{ .TypeName }}) {{ .TypeName }} {
+	if {{ .VariableName }}.Present() {
+		return {{ .VariableName }}.val
+	}
+	return v
+}
+
+// GetOrErr returns the {{ .TypeName }} value or an error if not present.
+func ({{ .VariableName }} {{ .OutputName }}) GetOrErr() ({{ .TypeName }}, error) {
 	if !{{ .VariableName }}.Present() {
 		var zero {{ .TypeName }}
 		return zero, errors.New("value not present")
@@ -170,27 +186,37 @@ func ({{ .VariableName }} {{ .OutputName }}) Get() ({{ .TypeName }}, error) {
 	return {{ .VariableName }}.val, nil
 }
 
-// MustGet returns the {{ .TypeName }} value or panics if not present.
-func ({{ .VariableName }} {{ .OutputName }}) MustGet() {{ .TypeName }} {
-	if !{{ .VariableName }}.Present() {
-		panic("value not present")
-	}
-	return {{ .VariableName }}.val
-}
-
-// OrElse returns the {{ .TypeName }} value or a default value if the value is not present.
-func ({{ .VariableName }} {{ .OutputName }}) OrElse(v {{ .TypeName }}) {{ .TypeName }} {
-	if {{ .VariableName }}.Present() {
-		return {{ .VariableName }}.val
-	}
-	return v
-}
-
-// If calls the function f with the value if the value is present.
+// If calls the function fn with the value if the value is present.
 func ({{ .VariableName }} {{ .OutputName }}) If(fn func({{ .TypeName }})) {
 	if {{ .VariableName }}.Present() {
 		fn({{ .VariableName }}.val)
 	}
+}
+
+// Map applies the function fn to the contained value (if any) and returns a new
+// option value.
+func ({{ .VariableName }} {{ .OutputName }}) Map(fn func({{ .TypeName }}) {{ .TypeName }}) {{ .OutputName }} {
+	if {{ .VariableName }}.Present() {
+		return Make{{ .OutputName }}(fn({{ .VariableName }}.val))
+	}
+	return {{ .VariableName }}
+}
+
+// And returns an empty {{ .OutputName }} option value if not present, otherwise returns
+// optb.
+func ({{ .VariableName }} {{ .OutputName }}) And(optb {{ .OutputName }}) {{ .OutputName }} {
+	if {{ .VariableName }}.Present() {
+		return optb
+	}
+	return {{ .OutputName }}{}
+}
+
+// Or returns the {{ .OutputName }} option value if present, otherwise returns optb.
+func ({{ .VariableName }} {{ .OutputName }}) Or(optb {{ .OutputName }}) {{ .OutputName }} {
+	if {{ .VariableName }}.Present() {
+		return {{ .VariableName }}
+	}
+	return optb
 }
 
 // MarshalJSON implements the json.Marshaler interface.

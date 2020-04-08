@@ -7,6 +7,24 @@ import (
 	"github.com/nvanbenschoten/optional"
 )
 
+func Example_present() {
+	values := []optional.String{
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
+		{},
+	}
+
+	for _, v := range values {
+		fmt.Println(v.Present())
+	}
+	// Output:
+	// true
+	// true
+	// true
+	// false
+}
+
 func Example_get() {
 	values := []optional.String{
 		optional.MakeString("foo"),
@@ -16,22 +34,24 @@ func Example_get() {
 	}
 
 	for _, v := range values {
-		value, err := v.Get()
-		if err != nil {
-			fmt.Println(err.Error())
-		} else {
-			fmt.Println(value)
-		}
+		value := func() (s string) {
+			defer func() {
+				if r := recover(); r != nil {
+					s = "[panics]"
+				}
+			}()
+			return v.Get()
+		}()
+		fmt.Println(value)
 	}
-
 	// Output:
 	// foo
 	//
 	// bar
-	// value not present
+	// [panics]
 }
 
-func Example_orElse() {
+func Example_getOr() {
 	values := []optional.String{
 		optional.MakeString("foo"),
 		optional.MakeString(""),
@@ -40,14 +60,36 @@ func Example_orElse() {
 	}
 
 	for _, v := range values {
-		fmt.Println(v.OrElse("not present"))
+		fmt.Println(v.GetOr("not present"))
 	}
-
 	// Output:
 	// foo
 	//
 	// bar
 	// not present
+}
+
+func Example_getOrErr() {
+	values := []optional.String{
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
+		{},
+	}
+
+	for _, v := range values {
+		value, err := v.GetOrErr()
+		if err != nil {
+			fmt.Println(err.Error())
+		} else {
+			fmt.Println(value)
+		}
+	}
+	// Output:
+	// foo
+	//
+	// bar
+	// value not present
 }
 
 func Example_if() {
@@ -60,14 +102,92 @@ func Example_if() {
 
 	for _, v := range values {
 		v.If(func(s string) {
-			fmt.Println("present")
+			fmt.Printf("called for %q\n", s)
 		})
 	}
-
 	// Output:
-	// present
-	// present
-	// present
+	// called for "foo"
+	// called for ""
+	// called for "bar"
+}
+
+func Example_map() {
+	values := []optional.String{
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
+		{},
+	}
+
+	for _, v := range values {
+		v2 := v.Map(func(s string) string {
+			return fmt.Sprintf("updated %q", s)
+		})
+
+		value, err := v2.GetOrErr()
+		if err != nil {
+			fmt.Println(err.Error())
+		} else {
+			fmt.Println(value)
+		}
+	}
+	// Output:
+	// updated "foo"
+	// updated ""
+	// updated "bar"
+	// value not present
+}
+
+func Example_and() {
+	values := []optional.String{
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
+		{},
+	}
+
+	for _, v := range values {
+		v2 := optional.MakeString("other")
+		v3 := v.And(v2)
+
+		value, err := v3.GetOrErr()
+		if err != nil {
+			fmt.Println(err.Error())
+		} else {
+			fmt.Println(value)
+		}
+	}
+	// Output:
+	// other
+	// other
+	// other
+	// value not present
+}
+
+func Example_or() {
+	values := []optional.String{
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
+		{},
+	}
+
+	for _, v := range values {
+		v2 := optional.MakeString("other")
+		v3 := v.Or(v2)
+
+		value, err := v3.GetOrErr()
+		if err != nil {
+			fmt.Println(err.Error())
+		} else {
+			fmt.Println(value)
+		}
+	}
+	// Output:
+	// foo
+	//
+	// bar
+	// other
 }
 
 func Example_set() {
@@ -83,14 +203,13 @@ func Example_set() {
 
 	for _, v := range values {
 		s.Set(v)
-		value, err := s.Get()
+		value, err := s.GetOrErr()
 		if err != nil {
 			fmt.Println(err.Error())
 		} else {
 			fmt.Println(value)
 		}
 	}
-
 	// Output:
 	// foo
 	//
@@ -107,14 +226,13 @@ func Example_unset() {
 
 	for _, v := range values {
 		v.Unset()
-		value, err := v.Get()
+		value, err := v.GetOrErr()
 		if err != nil {
 			fmt.Println(err.Error())
 		} else {
 			fmt.Println(value)
 		}
 	}
-
 	// Output:
 	// value not present
 	// value not present
@@ -144,7 +262,6 @@ func Example_marshalJSON() {
 
 	out, _ := json.Marshal(&example{})
 	fmt.Println(string(out))
-
 	// Output:
 	// {"field":"foo","field_two":"foo"}
 	// {"field":"","field_two":""}
@@ -179,7 +296,6 @@ func Example_unmarshalJSON() {
 			fmt.Println(s)
 		})
 	}
-
 	// Output:
 	// foo
 	// foo

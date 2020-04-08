@@ -11,50 +11,49 @@ import (
 func TestInt_Get_Present(t *testing.T) {
 	o := MakeInt(42)
 
-	v, err := o.Get()
+	assert.True(t, o.Present())
+	assert.Equal(t, 42, o.Get())
+}
+
+func TestInt_Get_NotPresent(t *testing.T) {
+	o := Int{}
+
+	assert.False(t, o.Present())
+	assert.Panics(t, func() { o.Get() })
+}
+
+func TestInt_GetOr_Present(t *testing.T) {
+	o := MakeInt(42)
+
+	v := o.GetOr(99)
+	assert.True(t, o.Present())
+	assert.Equal(t, 42, v)
+}
+
+func TestInt_GetOr_NotPresent(t *testing.T) {
+	o := Int{}
+
+	v := o.GetOr(99)
+	assert.False(t, o.Present())
+	assert.Equal(t, 99, v)
+}
+
+func TestInt_GetOrErr_Present(t *testing.T) {
+	o := MakeInt(42)
+
+	v, err := o.GetOrErr()
 	assert.True(t, o.Present())
 	assert.NoError(t, err)
 	assert.Equal(t, 42, v)
 }
 
-func TestInt_Get_NotPresent(t *testing.T) {
+func TestInt_GetOrErr_NotPresent(t *testing.T) {
 	o := Int{}
-	var zero int
 
-	v, err := o.Get()
+	v, err := o.GetOrErr()
 	assert.False(t, o.Present())
 	assert.Error(t, err)
-	assert.Equal(t, zero, v)
-}
-
-func TestInt_MustGet_Present(t *testing.T) {
-	o := MakeInt(42)
-
-	assert.True(t, o.Present())
-	assert.Equal(t, 42, o.MustGet())
-}
-
-func TestInt_MustGet_NotPresent(t *testing.T) {
-	o := Int{}
-
-	assert.False(t, o.Present())
-	assert.Panics(t, func() { o.MustGet() })
-}
-
-func TestInt_OrElse_Present(t *testing.T) {
-	o := MakeInt(42)
-
-	v := o.OrElse(99)
-	assert.True(t, o.Present())
-	assert.Equal(t, 42, v)
-}
-
-func TestInt_OrElse_NotPresent(t *testing.T) {
-	o := Int{}
-
-	v := o.OrElse(99)
-	assert.False(t, o.Present())
-	assert.Equal(t, 99, v)
+	assert.Equal(t, 0, v)
 }
 
 func TestInt_If_Present(t *testing.T) {
@@ -77,6 +76,65 @@ func TestInt_If_NotPresent(t *testing.T) {
 	})
 	assert.False(t, o.Present())
 	assert.False(t, canary)
+}
+
+func TestInt_Map_Present(t *testing.T) {
+	o := MakeInt(42)
+
+	v := o.Map(func(i int) int { return 99 })
+	assert.True(t, v.Present())
+	assert.Equal(t, 99, v.Get())
+}
+
+func TestInt_Map_NotPresent(t *testing.T) {
+	o := Int{}
+
+	v := o.Map(func(i int) int { return 99 })
+	assert.False(t, v.Present())
+}
+
+func TestInt_And_Present(t *testing.T) {
+	o := MakeInt(42)
+
+	v := o.And(MakeInt(99))
+	assert.True(t, v.Present())
+	assert.Equal(t, 99, v.Get())
+
+	v2 := o.And(Int{})
+	assert.False(t, v2.Present())
+}
+
+func TestInt_And_NotPresent(t *testing.T) {
+	o := Int{}
+
+	v := o.And(MakeInt(99))
+	assert.False(t, v.Present())
+
+	v2 := o.And(Int{})
+	assert.False(t, v2.Present())
+}
+
+func TestInt_Or_Present(t *testing.T) {
+	o := MakeInt(42)
+
+	v := o.Or(MakeInt(99))
+	assert.True(t, v.Present())
+	assert.Equal(t, 42, v.Get())
+
+	v2 := o.Or(Int{})
+	assert.True(t, v2.Present())
+	assert.Equal(t, 42, v2.Get())
+}
+
+func TestInt_Or_NotPresent(t *testing.T) {
+	o := Int{}
+
+	v := o.Or(MakeInt(99))
+	assert.True(t, v.Present())
+	assert.Equal(t, 99, v.Get())
+
+	v2 := o.Or(Int{})
+	assert.False(t, v2.Present())
 }
 
 func TestInt_MarshalJSON(t *testing.T) {

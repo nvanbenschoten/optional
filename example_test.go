@@ -261,6 +261,24 @@ func Example_unset() {
 	// value not present
 }
 
+func Example_format() {
+	var values = []optional.String{
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
+		{},
+	}
+
+	for _, v := range values {
+		fmt.Printf("%s %v %+v %q\n", v, v, v, v)
+	}
+	// Output:
+	// some(foo) some(foo) some(foo) "some(foo)"
+	// some() some() some() "some()"
+	// some(bar) some(bar) some(bar) "some(bar)"
+	// none none none none
+}
+
 func Example_marshalJSON() {
 	type example struct {
 		Field    *optional.String `json:"field,omitempty"`

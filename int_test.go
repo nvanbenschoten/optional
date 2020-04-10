@@ -2,6 +2,7 @@ package optional
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -152,6 +153,24 @@ func TestInt_Or_NotPresent(t *testing.T) {
 
 	v2 := o.Or(Int{})
 	assert.False(t, v2.Present())
+}
+
+func TestInt_Format(t *testing.T) {
+	type fields struct {
+		WithValue     Int
+		WithZeroValue Int
+		WithNoValue   Int
+		Unused        Int
+	}
+
+	var instance = fields{
+		WithValue:     MakeInt(42),
+		WithZeroValue: MakeInt(0),
+		WithNoValue:   Int{},
+	}
+
+	out := fmt.Sprintf("%s", instance)
+	assert.Equal(t, `{some(42) some(0) none none}`, out)
 }
 
 func TestInt_MarshalJSON(t *testing.T) {

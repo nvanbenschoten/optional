@@ -133,6 +133,8 @@ package {{ .PackageName }}
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 )
 
 // {{ .OutputName }} is an optional {{ .TypeName }}.
@@ -226,6 +228,28 @@ func ({{ .VariableName }} {{ .OutputName }}) Or(optb {{ .OutputName }}) {{ .Outp
 		return {{ .VariableName }}
 	}
 	return optb
+}
+
+// Format implements the fmt.Formatter interface.
+func ({{ .VariableName }} {{ .OutputName }}) Format(fmtS fmt.State, verb rune) {
+	if !{{ .VariableName }}.Present() {
+		io.WriteString(fmtS, "none")
+		return
+	}
+	var format string
+	switch verb {
+	case 'v':
+		if fmtS.Flag('+') {
+			format = "some(%+v)"
+		} else {
+			format = "some(%v)"
+		}
+	case 's':
+		format = "some(%v)"
+	case 'q':
+		format = "\"some(%v)\""
+	}
+	fmt.Fprintf(fmtS, format, {{ .VariableName }}.val)
 }
 
 // MarshalJSON implements the json.Marshaler interface.

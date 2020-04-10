@@ -2,6 +2,7 @@ package optional
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -152,6 +153,24 @@ func TestString_Or_NotPresent(t *testing.T) {
 
 	v2 := o.Or(String{})
 	assert.False(t, v2.Present())
+}
+
+func TestString_Format(t *testing.T) {
+	type fields struct {
+		WithValue     String
+		WithZeroValue String
+		WithNoValue   String
+		Unused        String
+	}
+
+	var instance = fields{
+		WithValue:     MakeString("foo"),
+		WithZeroValue: MakeString(""),
+		WithNoValue:   String{},
+	}
+
+	out := fmt.Sprintf("%s", instance)
+	assert.Equal(t, `{some(foo) some() none none}`, out)
 }
 
 func TestString_MarshalJSON(t *testing.T) {

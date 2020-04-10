@@ -37,6 +37,24 @@ func TestString_GetOr_NotPresent(t *testing.T) {
 	assert.Equal(t, "bar", v)
 }
 
+func TestString_GetOrBool_Present(t *testing.T) {
+	o := MakeString("foo")
+
+	v, ok := o.GetOrBool()
+	assert.True(t, o.Present())
+	assert.True(t, ok)
+	assert.Equal(t, "foo", v)
+}
+
+func TestString_GetOrBool_NotPresent(t *testing.T) {
+	o := String{}
+
+	v, ok := o.GetOrBool()
+	assert.False(t, o.Present())
+	assert.False(t, ok)
+	assert.Equal(t, "", v)
+}
+
 func TestString_GetOrErr_Present(t *testing.T) {
 	o := MakeString("foo")
 

@@ -37,6 +37,24 @@ func TestInt_GetOr_NotPresent(t *testing.T) {
 	assert.Equal(t, 99, v)
 }
 
+func TestInt_GetOrBool_Present(t *testing.T) {
+	o := MakeInt(42)
+
+	v, ok := o.GetOrBool()
+	assert.True(t, o.Present())
+	assert.True(t, ok)
+	assert.Equal(t, 42, v)
+}
+
+func TestInt_GetOrBool_NotPresent(t *testing.T) {
+	o := Int{}
+
+	v, ok := o.GetOrBool()
+	assert.False(t, o.Present())
+	assert.False(t, ok)
+	assert.Equal(t, 0, v)
+}
+
 func TestInt_GetOrErr_Present(t *testing.T) {
 	o := MakeInt(42)
 

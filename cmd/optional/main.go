@@ -177,6 +177,15 @@ func ({{ .VariableName }} {{ .OutputName }}) GetOr(v {{ .TypeName }}) {{ .TypeNa
 	return v
 }
 
+// GetOrBool returns the {{ .TypeName }} value or false if not present.
+func ({{ .VariableName }} {{ .OutputName }}) GetOrBool() ({{ .TypeName }}, bool) {
+	if !{{ .VariableName }}.Present() {
+		var zero {{ .TypeName }}
+		return zero, false
+	}
+	return {{ .VariableName }}.val, true
+}
+
 // GetOrErr returns the {{ .TypeName }} value or an error if not present.
 func ({{ .VariableName }} {{ .OutputName }}) GetOrErr() ({{ .TypeName }}, error) {
 	if !{{ .VariableName }}.Present() {

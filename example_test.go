@@ -69,6 +69,28 @@ func Example_getOr() {
 	// not present
 }
 
+func Example_getOrBool() {
+	values := []optional.String{
+		optional.MakeString("foo"),
+		optional.MakeString(""),
+		optional.MakeString("bar"),
+		{},
+	}
+
+	for _, v := range values {
+		if s, ok := v.GetOrBool(); ok {
+			fmt.Println(s)
+		} else {
+			fmt.Println("not present")
+		}
+	}
+	// Output:
+	// foo
+	//
+	// bar
+	// not present
+}
+
 func Example_getOrErr() {
 	values := []optional.String{
 		optional.MakeString("foo"),
@@ -78,11 +100,10 @@ func Example_getOrErr() {
 	}
 
 	for _, v := range values {
-		value, err := v.GetOrErr()
-		if err != nil {
-			fmt.Println(err.Error())
+		if s, err := v.GetOrErr(); err != nil {
+			fmt.Println(err)
 		} else {
-			fmt.Println(value)
+			fmt.Println(s)
 		}
 	}
 	// Output:

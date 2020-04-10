@@ -23,39 +23,9 @@ This repository is a fork of github.com/markphelps/optional, which also provides
 * [https://github.com/leighmcculloch/go-optional](https://github.com/leighmcculloch/go-optional)
 * [https://github.com/golang/go/issues/7054](https://github.com/golang/go/issues/7054)
 
-## Tool
-
-### Install
-
-`go get -u github.com/nvanbenschoten/optional/cmd/optional`
-
-### Usage
-
-Typically this process would be run using go generate, like this:
-
-```go
-//go:generate optional -type=Foo
-```
-
-running this command:
-
-```bash
-optional -type=Foo
-```
-
-in the same directory will create the file optional_foo.go
-containing a definition of:
-
-```go
-type OptionalFoo struct {
-  ...
-}
-```
-
-The default type is OptionalT or optionalT (depending on if the type is exported)
-and output file is optional_t.go. This can be overridden with the -output flag.
-
 ## Library
+
+The library provides option types each primitive Go type:
 
 * [bool](bool.go)
 * [byte](byte.go)
@@ -92,11 +62,22 @@ import (
 func main() {
 	s := optional.MakeString("foo")
 
-	value, err := s.GetOrErr()
-	if err != nil {
-		// handle error!
+	if s.Present() {
+		fmt.Println(s.Get())
 	} else {
-		fmt.Println(value)
+		fmt.Println("missing")
+	}
+
+	if val, ok := s.GetOrBool(); ok {
+		fmt.Println(val)
+	} else {
+		fmt.Println("missing")
+	}
+
+	if val, err := s.GetOrErr(); err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(val)
 	}
 
 	t := optional.String{}
@@ -153,59 +134,39 @@ These sizes will differ depending on target CPU architecture and may change in f
 
 No effort has been made to specialize the implementation of specific option types in order to optimize for memory size. Future work may explore such optimizations in a manner akin to Rust's ["niche-filling strategy"](https://github.com/rust-lang/rust/pull/45225).
 
-## Marshalling/Unmarshalling JSON
+## Tool
 
-Option types marshal to/from JSON as you would expect:
+The tool can generate option type wrappers around your own types.
 
-### Marshalling
+### Install
+
+`go get -u github.com/nvanbenschoten/optional/cmd/optional`
+
+### Usage
+
+Typically this process would be run using go generate, like this:
 
 ```go
-package main
+//go:generate optional -type=Foo
+```
 
-import (
-	"encoding/json"
-	"fmt"
-)
+running this command:
 
-func main() {
-	var value = struct {
-		Field optional.String `json:"field,omitempty"`
-	}{
-		Field: optional.MakeString("bar"),
-	}
+```bash
+optional -type=Foo
+```
 
-	out, _ := json.Marshal(value)
+in the same directory will create the file optional_foo.go
+containing a definition of:
 
-	fmt.Println(string(out))
-	// outputs: {"field":"bar"}
+```go
+type OptionalFoo struct {
+  ...
 }
 ```
 
-### Unmarshalling
-
-```go
-package main
-
-import (
-	"encoding/json"
-	"fmt"
-)
-
-func main() {
-	var value = &struct {
-		Field optional.String `json:"field,omitempty"`
-	}{}
-
-	_ = json.Unmarshal([]byte(`{"field":"bar"}`), value)
-
-	value.Field.If(func(s string) {
-		fmt.Println(s)
-	})
-	// outputs: bar
-}
-```
-
-See [example_test.go](example_test.go) for more examples.
+The default type is OptionalT or optionalT (depending on if the type is exported)
+and output file is optional_t.go. This can be overridden with the -output flag.
 
 ## Test Coverage
 

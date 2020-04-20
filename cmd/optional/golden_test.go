@@ -23,8 +23,10 @@ type testcase struct {
 
 var tests = []testcase{
 	{"built-in datatype", "optional", "String", "string", "string.go"},
-	{"custom exported type", "foo", "OptionalFoo", "Foo", "optional_foo.go"},
-	{"custom non-exported type", "bar", "optionalBar", "bar", "optional_bar.go"},
+	{"custom exported value type", "foo", "OptionalFoo", "Foo", "optional_foo.go"},
+	{"custom non-exported value type", "bar", "optionalBar", "bar", "optional_bar.go"},
+	{"custom exported pointer type", "foo", "OptionalFooPtr", "*Foo", "optional_foo_ptr.go"},
+	{"custom non-exported pointer type", "bar", "optionalBarPtr", "*bar", "optional_bar_ptr.go"},
 }
 
 // TestGolden compares generated files with 'golden files' line by line
